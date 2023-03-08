@@ -11,5 +11,5 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public interface GiraClient {
 
     @RequestMapping(method = GET, value = "/gira/station/{stationId}")
-    Station getStation(@PathVariable String stationId);
+    Station getStation(@PathVariable int stationId);
 }
