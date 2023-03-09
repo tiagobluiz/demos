@@ -19,8 +19,9 @@ repositories {
 }
 
 ext {
-	set('springCloudVersion', "2022.0.1")
-	set('testcontainersVersion', "1.17.6")
+	springCloudVersion = "2022.0.1"
+	testcontainersVersion = "1.17.6"
+	postgresqlDriverVersion = "42.5.4"
 }
 
 dependencies {
@@ -28,6 +29,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation "org.postgresql:postgresql:${postgresqlDriverVersion}"
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
