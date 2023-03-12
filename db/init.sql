@@ -5,8 +5,6 @@ CREATE TABLE IF NOT EXISTS stations (
     parish varchar(256) NOT NULL,
     capacity smallint NOT NULL,
     status varchar(50) NOT NULL, -- PLANNED / INSTALLING / TESTING / INACTIVE / ACTIVE
-    electricBikes smallint NOT NULL DEFAULT 0,
-    classicBikes smallint NOT NULL DEFAULT 0,
     CONSTRAINT UK_coordinates UNIQUE(coordinates)
 );
 
