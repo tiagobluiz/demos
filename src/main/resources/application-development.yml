@@ -6,15 +6,3 @@ spring:
     username: postgres
     password: password
     url: jdbc:postgresql://localhost:5432/demo
-  cloud:
-    feign:
-      client:
-        config:
-          default:
-            connectTimeout: 5000
-            readTimeout: 5000
-            loggerLevel: basic
-      circuitbreaker:
-        enabled: true
-        alphanumeric-ids:
-          enabled: true
