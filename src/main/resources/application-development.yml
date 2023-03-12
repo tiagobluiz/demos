@@ -18,27 +18,3 @@ spring:
         enabled: true
         alphanumeric-ids:
           enabled: true
-
-gira:
-  api:
-    key: 632555659af722fbc247bbc3846262f3
-    url: https://opendata.emel.pt
-  stations:
-    - id: 556
-      name: Lumiar
-    - id: 555
-      name: Quinta das Conchas
-    - id: 420
-      name: IST
-    - id: 419
-      name: IST - Electro
-    - id: 417
-      name: Arco do Cego
-    - id: 421
-      name: Alameda
-    - id: 431
-      name: Bairro
-    - id: 416
-      name: Saldanha
-    - id: 301
-      name: Avenida da Liberdade
