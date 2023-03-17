@@ -6,3 +6,5 @@ spring:
     username: postgres
     password: password
     url: jdbc:postgresql://localhost:5432/demo
+  flyway:
+    baseline-on-migrate: true

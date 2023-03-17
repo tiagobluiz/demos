@@ -1,0 +1,18 @@
+{
+  "stations": [
+    {
+      "id": 1,
+      "coordinates": "38.77066006800165, -9.160284356927665",
+      "address": "Rua Luís de Freitas Branco",
+      "parish": "Lumiar",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "coordinates": "38.772483954508274, -9.154035912185192",
+      "address": "Rua Nóbrega e Sousa",
+      "parish": "Lumiar",
+      "status": "Planned"
+    }
+  ]
+}
