@@ -1,4 +1,4 @@
-package com.playground.demo.entities.enums;
+package com.playground.demo.persistence.entities.enums;
 
 public enum Parish {
     LUMIAR,

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum BikeStatus {
-    ON_USE("On use"),
+public enum AssetStatus {
     ACTIVE("Active"),
+    INACTIVE("Inactive"),
     ON_MAINTENANCE("On Maintenance"),
     REQUIRING_MAINTENANCE("Requiring Maintenance");
 

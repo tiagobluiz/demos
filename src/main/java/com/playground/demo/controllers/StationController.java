@@ -29,7 +29,7 @@ public class StationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> createStation(@PathVariable int id) {
+    public ResponseEntity<String> updateStation(@PathVariable int id, StationModel station) {
         return ResponseEntity.ok("{\"id\" : " + id + "}");
     }
 }

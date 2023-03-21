@@ -1,6 +1,6 @@
 INSERT INTO stations (id, coordinates, address, parish, status)
-VALUES (1, '38.77066006800165, -9.160284356927665', 'Rua Luís de Freitas Branco', 'LUMIAR', 'ACTIVE'),
-       (2, '38.772483954508274, -9.154035912185192', 'Rua Nóbrega e Sousa', 'LUMIAR', 'PLANNED');
+VALUES (1, ST_GeomFromText('POINT(38.77066006800165 -9.160284356927665)', 4326), 'Rua Luís de Freitas Branco', 'LUMIAR', 'ACTIVE'),
+       (2, ST_GeomFromText('POINT(38.772483954508274 -9.154035912185192)', 4326), 'Rua Nóbrega e Sousa', 'LUMIAR', 'PLANNED');
 
 INSERT INTO docks(id, station_id, dock_number, status)
 VALUES (11, 1, 1, 'ACTIVE'),
