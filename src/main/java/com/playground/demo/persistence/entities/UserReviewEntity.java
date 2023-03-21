@@ -1,4 +1,4 @@
-package com.playground.demo.entities;
+package com.playground.demo.persistence.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,7 +12,7 @@ public class UserReviewEntity {
 
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
     @Column(nullable = false)

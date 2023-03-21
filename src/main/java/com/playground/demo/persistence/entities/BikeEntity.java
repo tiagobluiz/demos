@@ -1,7 +1,7 @@
-package com.playground.demo.entities;
+package com.playground.demo.persistence.entities;
 
-import com.playground.demo.entities.enums.BikeStatus;
-import com.playground.demo.entities.enums.BikeType;
+import com.playground.demo.persistence.entities.enums.AssetStatus;
+import com.playground.demo.persistence.entities.enums.BikeType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class BikeEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    BikeStatus status;
+    AssetStatus status;
 
     @Column(nullable = false)
     int km;

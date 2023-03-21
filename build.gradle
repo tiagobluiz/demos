@@ -26,6 +26,7 @@ ext {
 	flywayVersion = "9.15.2"
 	easyRandomCoreVersion = "5.0.0"
 	mockitoVersion = "5.2.0"
+	hibernateSpatialVersion = "6.1.7.Final"
 }
 
 dependencies {
@@ -33,6 +34,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 	implementation "org.postgresql:postgresql:${postgresqlDriverVersion}"
+	implementation "org.hibernate.orm:hibernate-spatial:${hibernateSpatialVersion}"
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
 	implementation "org.flywaydb:flyway-core:${flywayVersion}"

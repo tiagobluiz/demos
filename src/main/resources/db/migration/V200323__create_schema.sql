@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS stations
 (
     id          serial PRIMARY KEY,
-    coordinates varchar(256) NOT NULL,
+    coordinates geometry(Point, 4326) NOT NULL,
     address     varchar(256) NOT NULL,
     parish      varchar(256) NOT NULL,
     status      varchar(50)  NOT NULL, -- PLANNED / INSTALLING / TESTING / INACTIVE / ACTIVE
@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS stations
 );
 
 CREATE INDEX IF NOT EXISTS idx_station_status ON stations (status);
+CREATE INDEX idx_spatial ON stations USING GIST (coordinates);
 
 CREATE TABLE IF NOT EXISTS docks
 (

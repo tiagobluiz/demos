@@ -3,6 +3,7 @@ package com.playground.demo.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.utils.PostgisSQLContainerInitializer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -13,12 +14,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
@@ -27,34 +25,22 @@ import static com.playground.demo.utils.TestUtils.readFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @Testcontainers
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(initializers = {PostgisSQLContainerInitializer.class})
 @ActiveProfiles("test")
 class StationControllerIntegrationTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    // see https://jschmitz.dev/posts/testcontainers_how_to_use_them_in_your_spring_boot_integration_tests/
-    // https://bootify.io/spring-rest/spring-boot-integration-tests-with-testcontainers.html
-    @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer("postgres:latest")
-            .withDatabaseName("demo")
-            .withUsername("postgres")
-            .withPassword("password");
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @DynamicPropertySource
-    static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-    }
-
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenCoordinatesAndRadius_whenGettingStationsList_thenStationWithinRadiusAreReturned() throws IOException {
         // given
@@ -69,7 +55,7 @@ class StationControllerIntegrationTest {
     }
 
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenAStationId_whenGettingAStation_thenStationDataIsReturned() throws IOException {
         // given
@@ -84,7 +70,7 @@ class StationControllerIntegrationTest {
     }
 
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenAnStationId_whenGettingAStationThatDoesNotExist_thenNotFoundIsReturned() {
         // when
@@ -95,7 +81,7 @@ class StationControllerIntegrationTest {
     }
 
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
             "stationsController_createStation_invalidDuplicatedCoordinates.json",
@@ -114,7 +100,7 @@ class StationControllerIntegrationTest {
     }
 
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenValidArguments_whenCreationAStation_thenStationIsPersisted() throws IOException {
         // given
@@ -137,11 +123,11 @@ class StationControllerIntegrationTest {
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody())
                 .isNotNull();
-                // todo remaining data;
+        // todo remaining data;
     }
 
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenValidArguments_whenUpdatingAStation_thenUpdateIsPersisted() throws IOException {
         // given
@@ -163,11 +149,11 @@ class StationControllerIntegrationTest {
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody())
                 .isNotNull();
-                // todo remaining data
+        // todo remaining data
     }
 
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenNonexistentStation_whenUpdatingAStation_thenNotFoundIsReturned() {
         // when
@@ -178,7 +164,7 @@ class StationControllerIntegrationTest {
     }
 
     @Sql(scripts = "/db/init.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/db/clean.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
             "stationsController_updateStation_invalidDuplicatedCoordinates.json",
