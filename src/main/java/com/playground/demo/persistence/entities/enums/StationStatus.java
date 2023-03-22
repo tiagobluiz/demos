@@ -5,5 +5,6 @@ public enum StationStatus {
     INSTALLING,
     TESTING,
     INACTIVE,
+    ON_MAINTENANCE,
     ACTIVE
 }
