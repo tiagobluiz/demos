@@ -1,7 +1,10 @@
 package com.playground.demo.controllers;
 
+import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.models.StationsSearchCriteria;
 import com.playground.demo.services.StationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +17,10 @@ public class StationController {
     private final StationService stationService;
 
     @GetMapping
-    public ResponseEntity<String> getStations() {
-        return ResponseEntity.ok("{\"stations\" : []}");
+    public ResponseEntity<NearStationsModel> getStations(@Valid StationsSearchCriteria searchCriteria) {
+        final var nearStations = stationService.getAllStations(searchCriteria);
+
+        return ResponseEntity.ok(nearStations);
     }
 
     @GetMapping("/{id}")

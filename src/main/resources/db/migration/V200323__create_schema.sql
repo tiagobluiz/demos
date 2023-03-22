@@ -2,23 +2,14 @@ CREATE TABLE IF NOT EXISTS stations
 (
     id          serial PRIMARY KEY,
     coordinates geometry(Point, 4326) NOT NULL,
-    address     varchar(256) NOT NULL,
-    parish      varchar(256) NOT NULL,
-    status      varchar(50)  NOT NULL, -- PLANNED / INSTALLING / TESTING / INACTIVE / ACTIVE
+    address     varchar(256)          NOT NULL,
+    parish      varchar(256)          NOT NULL,
+    status      varchar(50)           NOT NULL, -- PLANNED / INSTALLING / TESTING / INACTIVE / ACTIVE
     CONSTRAINT UK_coordinates UNIQUE (coordinates)
 );
 
 CREATE INDEX IF NOT EXISTS idx_station_status ON stations (status);
 CREATE INDEX idx_spatial ON stations USING GIST (coordinates);
-
-CREATE TABLE IF NOT EXISTS docks
-(
-    id          serial PRIMARY KEY,
-    station_id  int         NOT NULL,
-    dock_number int         NOT NULL,
-    status      varchar(50) NOT NULL, --  ACTIVE / INACTIVE / ON_MAINTENANCE / REQUIRING_MAINTENANCE
-    CONSTRAINT UK_station_bike UNIQUE (station_id, dock_number)
-);
 
 CREATE TABLE IF NOT EXISTS bikes
 (
@@ -27,6 +18,18 @@ CREATE TABLE IF NOT EXISTS bikes
     status                varchar(50) NOT NULL, -- ON_USE / ACTIVE / ON_MAINTENANCE / REQUIRING_MAINTENANCE
     km                    int         NOT NULL DEFAULT 0,
     last_maintenance_date date        NULL
+);
+
+CREATE TABLE IF NOT EXISTS docks
+(
+    id          serial PRIMARY KEY,
+    station_id  int         NOT NULL,
+    dock_number int         NOT NULL,
+    status      varchar(50) NOT NULL, --  ACTIVE / INACTIVE / ON_MAINTENANCE / REQUIRING_MAINTENANCE
+    bike_id     int         NULL,     -- A dock can be empty, thus no bike value exists
+    CONSTRAINT UK_station_dockNumber UNIQUE (station_id, dock_number),
+    CONSTRAINT FK_dock_bike FOREIGN KEY (bike_id) REFERENCES bikes (id),
+    CONSTRAINT FK_dock_station FOREIGN KEY (station_id) REFERENCES stations (id)
 );
 
 CREATE TABLE IF NOT EXISTS trips

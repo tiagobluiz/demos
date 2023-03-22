@@ -31,4 +31,8 @@ public class DockEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     AssetStatus status;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bike_id", referencedColumnName = "id")
+    BikeEntity bike;
 }
