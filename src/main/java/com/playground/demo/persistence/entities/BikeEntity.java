@@ -27,6 +27,9 @@ public class BikeEntity {
     @Column(nullable = false)
     int km;
 
+    @OneToOne(mappedBy = "bike", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    DockEntity dock;
+
 // TODO: Review if required
 //    @OneToMany(mappedBy = "bike")
 //    List<UserReviewEntity> reviews;

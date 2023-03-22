@@ -1,6 +1,6 @@
 package com.playground.demo.models.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -10,6 +10,6 @@ public enum Parish {
     BENFICA("Benfica"),
     PENHA_DE_FRANCA("Penha de França");
 
-    @JsonValue
+    @Getter
     private final String text;
 }

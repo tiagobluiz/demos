@@ -2,13 +2,15 @@ package com.playground.demo.models;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class NearStationsModel {
-    List<StationModel> stations;
+
+    @Builder.Default
+    List<StationModel> stations = new ArrayList<>();
 }
