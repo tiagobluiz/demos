@@ -3,6 +3,7 @@ package com.playground.demo.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.models.enums.StationStatus;
 import com.playground.demo.utils.PostgisSQLContainerInitializer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static com.playground.demo.utils.TestUtils.readFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,13 +47,12 @@ class StationControllerIntegrationTest {
     @Test
     void givenCoordinatesAndRadius_whenGettingStationsWithinRadius_thenStationWithinRadiusAreReturned() throws IOException {
         // given
-        final String expectedResponse = readFileAsString(this.getClass(), "stationsController_getStations_success.json");
-
         var uri = UriComponentsBuilder.newInstance()
                 .path("/stations")
                 .queryParam("longitude", 38.774393608389396)
                 .queryParam("latitude", -9.158491534606988)
                 .queryParam("radius", 2000)
+                .queryParam("statuses", Arrays.asList(StationStatus.values()))
                 .build()
                 .toUriString();
 
@@ -59,17 +60,20 @@ class StationControllerIntegrationTest {
         final var response = restTemplate.getForEntity(uri, NearStationsModel.class);
 
         // then
+        final var expectedResponse = MAPPER.readValue(
+                readFileAsString(this.getClass(), "stationsController_getStations_success.json"),
+                NearStationsModel.class
+        );
+
         assertThat(response.getStatusCode()).isEqualTo(OK);
-        assertThat(response.getBody()).isEqualTo(MAPPER.readValue(expectedResponse, NearStationsModel.class));
+        assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
     @Sql(scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
-    void givenCoordinatesAndRadiusForNonCoveredPoint_whenGettingStationWithinRadius_thenStationWithinRadiusAreReturned() throws IOException {
+    void givenCoordinatesAndRadiusForNonCoveredPoint_whenGettingStationWithinRadius_thenNoStationsAreReturned() {
         // given
-        final String expectedResponse = readFileAsString(this.getClass(), "stationsController_getStations_success.json");
-
         var uri = UriComponentsBuilder.newInstance()
                 .path("/stations")
                 .queryParam("longitude", 0)
@@ -83,36 +87,24 @@ class StationControllerIntegrationTest {
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(OK);
-        assertThat(response.getBody()).isEqualTo(MAPPER.readValue(expectedResponse, NearStationsModel.class));
+        assertThat(response.getBody()).isEqualTo(NearStationsModel.builder().build());
     }
 
     @Sql(scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
-    void givenThatStationsExist_whenGettingStations_thenAllStationsAreReturned() throws IOException {
-        // given
-        final String expectedResponse = readFileAsString(this.getClass(), "stationsController_getStations_success.json");
-
+    void givenNoQueryParameters_whenGettingStations_thenAllActiveStationAreReturned() throws IOException {
         // when
         final var response = restTemplate.getForEntity("/stations", NearStationsModel.class);
 
         // then
+        final var expectedResponse = MAPPER.readValue(
+                readFileAsString(this.getClass(), "stationsController_getActiveStations_success.json"),
+                NearStationsModel.class
+        );
+
         assertThat(response.getStatusCode()).isEqualTo(OK);
-        assertThat(response.getBody()).isEqualTo(MAPPER.readValue(expectedResponse, NearStationsModel.class));
-    }
-
-    @Test
-    void givenThatZeroStationsExist_whenGettingStations_thenEmptyObjectIsReturned() {
-        // when
-        final var response = restTemplate.getForEntity("/stations", NearStationsModel.class);
-
-        // then
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getStations())
-                .isNotNull()
-                .isEmpty();
+        assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
     @Sql(scripts = "/db/init.sql")

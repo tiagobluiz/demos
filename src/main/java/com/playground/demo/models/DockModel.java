@@ -1,10 +1,15 @@
 package com.playground.demo.models;
 
 import com.playground.demo.persistence.entities.enums.AssetStatus;
+import lombok.*;
 
-public record DockModel(
-        int id,
-        AssetStatus status,
-        BikeModel bike
-) {
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+public class DockModel {
+        private int id;
+        private AssetStatus status;
+        private BikeModel bike;
 }

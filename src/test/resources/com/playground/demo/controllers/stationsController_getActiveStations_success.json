@@ -37,24 +37,6 @@
           "status": "REQUIRING_MAINTENANCE"
         }
       ]
-    },
-    {
-      "id": 2,
-      "longitude": 38.772483954508274,
-      "latitude": -9.154035912185192,
-      "address": "Rua Nóbrega e Sousa",
-      "parish": "LUMIAR",
-      "status": "PLANNED",
-      "docks": [
-        {
-          "id": 55,
-          "status": "ACTIVE"
-        },
-        {
-          "id": 66,
-          "status": "INACTIVE"
-        }
-      ]
     }
   ]
 }
