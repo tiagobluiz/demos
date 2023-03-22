@@ -3,7 +3,6 @@ package com.playground.demo.models;
 import com.playground.demo.models.enums.Parish;
 import com.playground.demo.models.enums.StationStatus;
 import lombok.*;
-import org.locationtech.jts.geom.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +10,17 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 public class StationModel {
-    private final int id;
-    private final Point coordinates;
-    private final String address;
-    private final Parish parish;
-    private final StationStatus status;
-    private final List<DockModel> docks = new ArrayList<>();
+    private int id;
+    private double longitude;
+    private double latitude;
+    private String address;
+    private Parish parish;
+    private StationStatus status;
+    @Builder.Default
+    private List<DockModel> docks = new ArrayList<>();
 }

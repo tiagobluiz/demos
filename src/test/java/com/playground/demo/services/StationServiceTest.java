@@ -65,7 +65,7 @@ public class StationServiceTest {
         // given
         final var stationEntity = StationEntity.builder()
                 .id(OBJECT_GENERATOR.nextInt())
-                .coordinates(GEOMETRY_FACTORY.createPoint())
+                .coordinates(GEOMETRY_FACTORY.createPoint(new Coordinate(0, 0)))
                 .address("ADDRESS")
                 .status(ACTIVE)
                 .parish(LUMIAR)
@@ -78,7 +78,8 @@ public class StationServiceTest {
         // then
         final var expectedStation = StationModel.builder()
                 .id(stationEntity.getId())
-                .coordinates(stationEntity.getCoordinates())
+                .longitude(stationEntity.getCoordinates().getX())
+                .latitude(stationEntity.getCoordinates().getY())
                 .address(stationEntity.getAddress())
                 .status(StationStatus.ACTIVE)
                 .parish(Parish.LUMIAR)
@@ -219,7 +220,8 @@ public class StationServiceTest {
         // then
         final var expectedStation = StationModel.builder()
                 .id(entity.getId())
-                .coordinates(entity.getCoordinates())
+                .longitude(entity.getCoordinates().getX())
+                .latitude(entity.getCoordinates().getY())
                 .address(entity.getAddress())
                 .status(StationStatus.ACTIVE)
                 .parish(Parish.LUMIAR)
@@ -230,9 +232,12 @@ public class StationServiceTest {
 
     @Test
     void givenValidArguments_whenUpdatingStation_thenUpdatedStationIsReturned() {
+        final var coordinatesAsPoint = GEOMETRY_FACTORY.createPoint(new Coordinate(0, 0));
+
         final var updatedModel = StationModel.builder()
                 .id(OBJECT_GENERATOR.nextInt())
-                .coordinates(GEOMETRY_FACTORY.createPoint(new Coordinate(0, 0)))
+                .longitude(coordinatesAsPoint.getX())
+                .latitude(coordinatesAsPoint.getY())
                 .address("ADDRESS")
                 .status(StationStatus.ACTIVE)
                 .parish(Parish.LUMIAR)
@@ -240,7 +245,7 @@ public class StationServiceTest {
 
         final var objectBeforeUpdate = StationEntity.builder()
                 .id(updatedModel.getId())
-                .coordinates(updatedModel.getCoordinates())
+                .coordinates(coordinatesAsPoint)
                 .address(updatedModel.getAddress())
                 .status(ACTIVE)
                 .parish(LUMIAR)
