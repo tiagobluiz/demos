@@ -27,15 +27,21 @@ ext {
 	easyRandomCoreVersion = "5.0.0"
 	mockitoVersion = "5.2.0"
 	hibernateSpatialVersion = "6.1.7.Final"
+	mapstructVersion = "1.5.3.Final"
+	mapstructLombokBindingVersion = "0.2.0"
 }
 
 dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-graphql"
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
 	implementation "org.postgresql:postgresql:${postgresqlDriverVersion}"
 	implementation "org.hibernate.orm:hibernate-spatial:${hibernateSpatialVersion}"
+	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	compileOnly "org.projectlombok:lombok"
+	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${mapstructLombokBindingVersion}"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 	annotationProcessor "org.projectlombok:lombok"
 	implementation "org.flywaydb:flyway-core:${flywayVersion}"
 	testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"

@@ -6,8 +6,6 @@ import com.playground.demo.persistence.entities.enums.StationStatus;
 import com.playground.demo.utils.PostgisSQLContainerInitializer;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,6 +13,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Arrays;
+
+import static com.playground.demo.utils.TestUtils.GEOMETRY_FACTORY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
@@ -23,8 +24,6 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 @ContextConfiguration(initializers = {PostgisSQLContainerInitializer.class})
 @ActiveProfiles("test")
 class StationRepositoryTest {
-
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     @Autowired
     private StationRepository stationRepository;
@@ -37,7 +36,7 @@ class StationRepositoryTest {
         final var coordinates = GEOMETRY_FACTORY.createPoint(new Coordinate(38.77066006800165, -9.160284356927665));
 
         // when
-        final var stations = stationRepository.findAllInRadius(coordinates, 2000);
+        final var stations = stationRepository.findAllInRadius(coordinates, 2000, Arrays.asList(StationStatus.values()));
 
         // then
         assertThat(stations)
@@ -55,7 +54,7 @@ class StationRepositoryTest {
         final var coordinates = GEOMETRY_FACTORY.createPoint(new Coordinate(0, 0));
 
         // when
-        final var stations = stationRepository.findAllInRadius(coordinates, 2000);
+        final var stations = stationRepository.findAllInRadius(coordinates, 2000, Arrays.asList(StationStatus.values()));
 
         // then
         assertThat(stations)
