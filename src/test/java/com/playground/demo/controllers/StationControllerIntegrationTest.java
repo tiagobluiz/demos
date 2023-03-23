@@ -1,6 +1,7 @@
 package com.playground.demo.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.playground.demo.exceptions.ExceptionalResponse;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
 import com.playground.demo.models.enums.StationStatus;
@@ -47,7 +48,7 @@ class StationControllerIntegrationTest {
     @Test
     void givenCoordinatesAndRadius_whenGettingStationsWithinRadius_thenStationWithinRadiusAreReturned() throws IOException {
         // given
-        var uri = UriComponentsBuilder.newInstance()
+        final var uri = UriComponentsBuilder.newInstance()
                 .path("/stations")
                 .queryParam("longitude", 38.774393608389396)
                 .queryParam("latitude", -9.158491534606988)
@@ -74,7 +75,7 @@ class StationControllerIntegrationTest {
     @Test
     void givenCoordinatesAndRadiusForNonCoveredPoint_whenGettingStationWithinRadius_thenNoStationsAreReturned() {
         // given
-        var uri = UriComponentsBuilder.newInstance()
+        final var uri = UriComponentsBuilder.newInstance()
                 .path("/stations")
                 .queryParam("longitude", 0)
                 .queryParam("latitude", 0)
@@ -111,15 +112,17 @@ class StationControllerIntegrationTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenAStationId_whenGettingAStation_thenStationDataIsReturned() throws IOException {
-        // given
-        final String expectedResponse = readFileAsString(this.getClass(), "stationsController_getSingleStation_success.json");
-
         // when
-        final ResponseEntity<StationModel> response = restTemplate.getForEntity("/stations/1", StationModel.class);
+        final var response = restTemplate.getForEntity("/stations/1", StationModel.class);
 
         // then
+        final var expectedResponse = MAPPER.readValue(
+                readFileAsString(this.getClass(), "stationsController_getSingleStation_success.json"),
+                StationModel.class
+        );
+
         assertThat(response.getStatusCode()).isEqualTo(OK);
-        assertThat(response.getBody()).isEqualTo(MAPPER.readValue(expectedResponse, StationModel.class));
+        assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
     @Sql(scripts = "/db/init.sql")
@@ -127,10 +130,16 @@ class StationControllerIntegrationTest {
     @Test
     void givenAnStationId_whenGettingAStationThatDoesNotExist_thenNotFoundIsReturned() {
         // when
-        final ResponseEntity<String> response = restTemplate.getForEntity("/stations/999", String.class);
+        final var response = restTemplate.getForEntity("/stations/999", ExceptionalResponse.class);
 
         // then
+        final var expectedResponse = ExceptionalResponse.builder()
+                .reason("The requested station does not exist, please verify that the identifier is correct.")
+                .faultyValue("id", 999)
+                .build();
+
         assertThat(response.getStatusCode()).isEqualTo(NOT_FOUND);
+        assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
     @Sql(scripts = "/db/init.sql")

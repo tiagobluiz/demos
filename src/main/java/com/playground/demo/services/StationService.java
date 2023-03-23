@@ -33,14 +33,14 @@ public class StationService {
         return stationMapper.mapToModel(station);
     }
 
-    private StationEntity getStationAsEntity(int stationId) {
+    private StationEntity getStationAsEntity(final int stationId) {
         return stationRepository.findById(stationId)
                 .orElseThrow(() -> new StationNotFoundException(stationId));
     }
 
     @NotNull
     @Transactional(readOnly = true)
-    public NearStationsModel getAllStations(StationsSearchCriteria searchCriteria) {
+    public NearStationsModel getAllStations(final StationsSearchCriteria searchCriteria) {
         final var statuses = stationMapper.mapStatusToEntity(searchCriteria.getStatuses());
         final var stationsEntities = stationRepository.findAllInRadius(
                 searchCriteria.getCoordinatesAsPoint(),
@@ -55,7 +55,7 @@ public class StationService {
 
     @Transactional
     @NotNull
-    public StationModel createStation(CreateStationRequest stationToCreate) {
+    public StationModel createStation(final CreateStationRequest stationToCreate) {
         final var stationEntity = stationMapper.mapToEntity(stationToCreate);
 
         final var docks = IntStream.range(0, stationToCreate.getDocks())
@@ -69,7 +69,7 @@ public class StationService {
         return stationMapper.mapToModel(entity);
     }
 
-    private DockEntity buildDock(StationEntity station, int number) {
+    private DockEntity buildDock(final StationEntity station, final int number) {
         return DockEntity.builder()
                 .station(station)
                 .number(number)
@@ -79,7 +79,7 @@ public class StationService {
 
     @Transactional
     @NotNull
-    public StationModel updateStation(int stationId, StationModel stationToUpdate) {
+    public StationModel updateStation(final int stationId, final StationModel stationToUpdate) {
         final var station = getStationAsEntity(stationId);
 
         final var modelAsEntity = stationMapper.mapToEntity(stationToUpdate);

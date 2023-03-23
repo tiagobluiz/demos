@@ -17,15 +17,17 @@ public class StationController {
     private final StationService stationService;
 
     @GetMapping
-    public ResponseEntity<NearStationsModel> getStations(@Valid StationsSearchCriteria searchCriteria) {
+    public ResponseEntity<NearStationsModel> getStations(@Valid final StationsSearchCriteria searchCriteria) {
         final var nearStations = stationService.getAllStations(searchCriteria);
 
         return ResponseEntity.ok(nearStations);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getSingleStation(@PathVariable int id) {
-        return ResponseEntity.ok("{\"id\" : " + id + "}");
+    public ResponseEntity<StationModel> getSingleStation(@PathVariable final int id) {
+        final var station = stationService.getStation(id);
+
+        return ResponseEntity.ok(station);
     }
 
     @PostMapping
