@@ -1,46 +1,38 @@
 {
   "id": 1,
-  "coordinates": "38.77066006800165, -9.160284356927665",
+  "longitude": 38.77066006800165,
+  "latitude": -9.160284356927665,
   "address": "Rua Luís de Freitas Branco",
-  "parish": "Lumiar",
-  "status": "Active",
+  "parish": "LUMIAR",
+  "status": "ACTIVE",
   "docks": [
     {
       "id": 11,
-      "status": "Active",
+      "status": "ACTIVE",
       "bike": {
         "id": 111,
-        "type": "Electric",
-        "status": "Active",
-        "km": 555,
-        "averageReview": 5
+        "type": "ELECTRIC",
+        "status": "ACTIVE",
+        "km": 555
       }
     },
     {
       "id": 22,
-      "status": "Active",
+      "status": "ACTIVE",
       "bike": {
-        "id": 222,
-        "type": "Electric",
-        "status": "Active",
-        "km": 777,
-        "averageReview": 4.5
+        "id": 333,
+        "type": "CLASSIC",
+        "status": "REQUIRING_MAINTENANCE",
+        "km": 1234
       }
     },
     {
       "id": 33,
-      "status": "Active",
-      "bike": {
-        "id": 333,
-        "type": "Classic",
-        "status": "Requiring Maintenance",
-        "km": 1234,
-        "averageReview": 2
-      }
+      "status": "ACTIVE"
     },
     {
       "id": 44,
-      "status": "Requiring Maintenance"
+      "status": "REQUIRING_MAINTENANCE"
     }
   ]
 }
