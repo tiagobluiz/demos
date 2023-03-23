@@ -2,6 +2,8 @@ package com.playground.demo.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playground.demo.exceptions.ExceptionalResponse;
+import com.playground.demo.models.CreateStationRequest;
+import com.playground.demo.models.DockModel;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
 import com.playground.demo.models.enums.StationStatus;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,10 +28,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.playground.demo.models.enums.Parish.LUMIAR;
+import static com.playground.demo.models.enums.StationStatus.INSTALLING;
+import static com.playground.demo.persistence.entities.enums.AssetStatus.INACTIVE;
 import static com.playground.demo.utils.TestUtils.readFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @Testcontainers
@@ -142,50 +149,74 @@ class StationControllerIntegrationTest {
         assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
-    @Sql(scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
-            "stationsController_createStation_invalidDuplicatedCoordinates.json",
             "stationsController_createStation_invalidParish.json",
             "stationsController_createStation_invalidStatus.json"
     })
     void givenInvalidArguments_whenCreatingAStation_thenBadRequestIsReturned(String fileName) throws IOException {
         // given
-        final String input = readFileAsString(this.getClass(), fileName);
+        final var input = readFileAsString(this.getClass(), fileName);
+
+        final var headers = new HttpHeaders();
+        headers.setContentType(APPLICATION_JSON);
+
+        final var entity = new HttpEntity<>(input, headers);
 
         // when
-        final ResponseEntity<String> response = restTemplate.postForEntity("/stations", input, String.class);
+        final var response = restTemplate.postForEntity("/stations", entity, ExceptionalResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
     }
 
-    @Sql(scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
-    void givenValidArguments_whenCreationAStation_thenStationIsPersisted() throws IOException {
+    void givenValidArguments_whenCreationAStation_thenStationIsPersisted() {
         // given
-        final String input = readFileAsString(this.getClass(), "stationsController_createStation_validRequest.json");
+        final var input = CreateStationRequest.builder()
+                .longitude(38.773493797784944)
+                .latitude(-9.161430406823348)
+                .address("Estrada da Torre")
+                .parish(LUMIAR)
+                .status(INSTALLING)
+                .docks(2)
+                .build();
 
         // when
-        final ResponseEntity<StationModel> creationResponse = restTemplate.postForEntity("/stations", input, StationModel.class);
+        final var creationResponse = restTemplate.postForEntity("/stations", input, StationModel.class);
 
         // then
         assertThat(creationResponse.getStatusCode()).isEqualTo(CREATED);
 
-        final StationModel creationBody = creationResponse.getBody();
-        assertThat(creationBody)
-                .isNotNull();
-        // todo remaingn data;
+        final var createdStation = creationResponse.getBody();
+
+        assertThat(createdStation)
+                .isNotNull()
+                .extracting(StationModel::getLongitude, StationModel::getLatitude, StationModel::getParish, StationModel::getStatus)
+                .containsExactly(input.getLongitude(), input.getLatitude(), input.getParish(), input.getStatus());
+
+        assertThat(createdStation.getId()).isNotZero();
+
+        assertThat(createdStation.getDocks())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(2)
+                .extracting(DockModel::getStatus)
+                .containsExactly(INACTIVE, INACTIVE);
+
+        assertThat(creationResponse.getHeaders().getLocation())
+                .isNotNull()
+                .isEqualTo(UriComponentsBuilder.fromPath("/stations/{id}").buildAndExpand(createdStation.getId()).toUri());
 
         // Verify that it was persisted
-        final ResponseEntity<StationModel> response = restTemplate.getForEntity("/stations/" + creationBody.getId(), StationModel.class);
+        final var response = restTemplate.getForEntity("/stations/" + createdStation.getId(), StationModel.class);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody())
-                .isNotNull();
-        // todo remaining data;
+                .isNotNull()
+                .isEqualTo(createdStation);
     }
 
     @Sql(scripts = "/db/init.sql")

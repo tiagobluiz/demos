@@ -1,13 +1,16 @@
 package com.playground.demo.controllers;
 
+import com.playground.demo.models.CreateStationRequest;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
 import com.playground.demo.models.StationsSearchCriteria;
 import com.playground.demo.services.StationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/stations")
@@ -30,9 +33,16 @@ public class StationController {
         return ResponseEntity.ok(station);
     }
 
-    @PostMapping
-    public ResponseEntity<String> createStation(StationModel station) {
-        return ResponseEntity.ok("{\"id\" : " + 1 + "}");
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StationModel> createStation(@RequestBody final CreateStationRequest createRequest) {
+        final var createdStation = stationService.createStation(createRequest);
+
+        final var uri = UriComponentsBuilder
+                .fromPath("/stations/{id}")
+                .buildAndExpand(createdStation.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(createdStation);
     }
 
     @PutMapping("/{id}")
