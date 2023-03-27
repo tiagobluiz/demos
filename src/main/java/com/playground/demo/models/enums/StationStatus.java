@@ -1,6 +1,6 @@
 package com.playground.demo.models.enums;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -12,6 +12,6 @@ public enum StationStatus {
     ON_MAINTENANCE("On Maintenance"),
     ACTIVE("Active");
 
-    @Getter
+    @JsonProperty
     private final String text;
 }

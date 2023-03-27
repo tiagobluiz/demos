@@ -1,8 +1,8 @@
 package com.playground.demo.services;
 
 import com.playground.demo.exceptions.notfound.StationNotFoundException;
-import com.playground.demo.models.CreateStationRequest;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.StationsSearchCriteria;
 import com.playground.demo.models.enums.Parish;
 import com.playground.demo.models.enums.StationStatus;
@@ -206,7 +206,7 @@ public class StationServiceTest {
 
         doAnswer(answer -> entity.setId(OBJECT_GENERATOR.nextInt())).when(stationRepository).save(entity);
 
-        final var createRequest = CreateStationRequest.builder()
+        final var createRequest = StationRequest.builder()
                 .address("ADDRESS")
                 .longitude(entity.getCoordinates().getX())
                 .longitude(entity.getCoordinates().getY())
@@ -234,8 +234,7 @@ public class StationServiceTest {
     void givenValidArguments_whenUpdatingStation_thenUpdatedStationIsReturned() {
         final var coordinatesAsPoint = GEOMETRY_FACTORY.createPoint(new Coordinate(0, 0));
 
-        final var updatedModel = StationModel.builder()
-                .id(OBJECT_GENERATOR.nextInt())
+        final var updatedModel = StationRequest.builder()
                 .longitude(coordinatesAsPoint.getX())
                 .latitude(coordinatesAsPoint.getY())
                 .address("ADDRESS")
@@ -244,36 +243,48 @@ public class StationServiceTest {
                 .build();
 
         final var objectBeforeUpdate = StationEntity.builder()
-                .id(updatedModel.getId())
+                .id(OBJECT_GENERATOR.nextInt())
                 .coordinates(coordinatesAsPoint)
-                .address(updatedModel.getAddress())
+                .address(OBJECT_GENERATOR.nextObject(String.class))
                 .status(ACTIVE)
                 .parish(LUMIAR)
                 .build();
 
-        when(stationRepository.findById(updatedModel.getId())).thenReturn(Optional.of(objectBeforeUpdate));
+        when(stationRepository.findById(objectBeforeUpdate.getId())).thenReturn(Optional.of(objectBeforeUpdate));
 
         // when
-        final var actualResult = stationService.updateStation(updatedModel.getId(), updatedModel);
+        final var actualResult = stationService.updateStation(objectBeforeUpdate.getId(), updatedModel);
 
         // then
-        assertThat(actualResult).isEqualTo(updatedModel);
+        final var expectedStation = StationModel.builder()
+                .id(objectBeforeUpdate.getId())
+                .longitude(updatedModel.getLongitude())
+                .latitude(updatedModel.getLatitude())
+                .address(objectBeforeUpdate.getAddress())
+                .status(StationStatus.ACTIVE)
+                .parish(Parish.LUMIAR)
+                .build();
+
+        assertThat(actualResult).isEqualTo(expectedStation);
     }
 
     @Test
     void givenThatStationDoesNotExist_whenUpdatingStation_thenStationNotFoundIsThrown() {
         // given
-        final var randomStation = OBJECT_GENERATOR.nextObject(StationModel.class);
+        final var randomStation = OBJECT_GENERATOR.nextObject(StationRequest.class);
+        final var randomStationId = OBJECT_GENERATOR.nextInt();
+
         when(stationRepository.findById(any())).thenReturn(Optional.empty());
 
         // when
         final var exception = assertThrowsExactly(
                 StationNotFoundException.class,
-                () -> stationService.updateStation(randomStation.getId(), randomStation)
+                () -> stationService.updateStation(randomStationId, randomStation)
         );
 
         // then
         assertThat(exception.getReason())
                 .isEqualTo("The requested station does not exist, please verify that the identifier is correct.");
+        assertThat(exception.getStationId()).isEqualTo(randomStationId);
     }
 }

@@ -1,6 +1,6 @@
 package com.playground.demo.services.mappers;
 
-import com.playground.demo.models.CreateStationRequest;
+import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.StationModel;
 import com.playground.demo.models.enums.StationStatus;
 import com.playground.demo.persistence.entities.StationEntity;
@@ -18,17 +18,19 @@ public interface StationMapper {
 
     @Mapping(target = "longitude", source = "entity.coordinates.x")
     @Mapping(target = "latitude", source = "entity.coordinates.y")
-    StationModel mapToModel(StationEntity entity);
+    StationModel mapToModel(final StationEntity entity);
 
-    List<StationModel> mapToModel(List<StationEntity> entity);
+    List<StationModel> mapToModel(final List<StationEntity> entity);
 
-    @Mapping(target = "coordinates", expression = "java(GeometryUtils.GEOMETRY_FACTORY.createPoint(new Coordinate(createStationRequest.getLongitude(), createStationRequest.getLatitude())))")
-    @Mapping(target = "docks", ignore = true)
     @Mapping(target = "id", ignore = true)
-    StationEntity mapToEntity(CreateStationRequest createStationRequest);
+    @Mapping(target = "docks", ignore = true)
+    @Mapping(target = "coordinates", expression = "java(GeometryUtils.GEOMETRY_FACTORY.createPoint(new Coordinate(stationRequest.getLongitude(), stationRequest.getLatitude())))")
+    StationEntity mapToEntity(final StationRequest stationRequest);
 
-    @Mapping(target = "coordinates", expression = "java(GeometryUtils.GEOMETRY_FACTORY.createPoint(new Coordinate(model.getLongitude(), model.getLatitude())))")
-    StationEntity mapToEntity(StationModel model);
+    @Mapping(target = "docks", ignore = true)
+    @Mapping(target = "id", source = "stationId")
+    @Mapping(target = "coordinates", expression = "java(GeometryUtils.GEOMETRY_FACTORY.createPoint(new Coordinate(stationRequest.getLongitude(), stationRequest.getLatitude())))")
+    StationEntity mapToEntity(final int stationId, final StationRequest stationRequest);
 
-    List<com.playground.demo.persistence.entities.enums.StationStatus> mapStatusToEntity(List<StationStatus> status);
+    List<com.playground.demo.persistence.entities.enums.StationStatus> mapStatusToEntity(final List<StationStatus> status);
 }

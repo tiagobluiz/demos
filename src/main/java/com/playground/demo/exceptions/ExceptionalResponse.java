@@ -1,13 +1,15 @@
 package com.playground.demo.exceptions;
 
-import lombok.Builder;
-import lombok.Singular;
+import lombok.*;
 
 import java.util.Map;
 
+@Data
 @Builder
-public record ExceptionalResponse(
-        String reason,
-        @Singular Map<String, Object> faultyValues
-) {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class ExceptionalResponse {
+    private String reason;
+    @Singular
+    private Map<String, Object> faultyValues;
 }

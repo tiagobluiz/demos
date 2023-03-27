@@ -1,6 +1,7 @@
 {
   "id": 2,
-  "coordinates": "38.77066006800165, -9.160284356927665",
+  "longitude": 38.772483954508274,
+  "latitude": -9.154035912185192,
   "address": "Rua Luís de Freitas Branco",
   "parish": "LUMIAR",
   "status": "INSTALLING"
