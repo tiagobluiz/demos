@@ -1,7 +1,7 @@
 package com.playground.demo.services;
 
 import com.playground.demo.exceptions.notfound.StationNotFoundException;
-import com.playground.demo.models.CreateStationRequest;
+import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
 import com.playground.demo.models.StationsSearchCriteria;
@@ -53,9 +53,9 @@ public class StationService {
         return new NearStationsModel(stations);
     }
 
-    @Transactional
     @NotNull
-    public StationModel createStation(final CreateStationRequest stationToCreate) {
+    @Transactional
+    public StationModel createStation(final StationRequest stationToCreate) {
         final var stationEntity = stationMapper.mapToEntity(stationToCreate);
 
         final var docks = IntStream.range(0, stationToCreate.getDocks())
@@ -77,12 +77,12 @@ public class StationService {
                 .build();
     }
 
-    @Transactional
     @NotNull
-    public StationModel updateStation(final int stationId, final StationModel stationToUpdate) {
+    @Transactional
+    public StationModel updateStation(final int stationId, final StationRequest stationToUpdate) {
         final var station = getStationAsEntity(stationId);
 
-        final var modelAsEntity = stationMapper.mapToEntity(stationToUpdate);
+        final var modelAsEntity = stationMapper.mapToEntity(stationId, stationToUpdate);
 
         station.setStatus(modelAsEntity.getStatus())
                 .setCoordinates(modelAsEntity.getCoordinates())

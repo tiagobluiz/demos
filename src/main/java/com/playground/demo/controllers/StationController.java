@@ -1,11 +1,12 @@
 package com.playground.demo.controllers;
 
-import com.playground.demo.models.CreateStationRequest;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.StationsSearchCriteria;
 import com.playground.demo.services.StationService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class StationController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StationModel> createStation(@RequestBody final CreateStationRequest createRequest) {
+    public ResponseEntity<StationModel> createStation(@RequestBody @NotNull @Valid final StationRequest createRequest) {
         final var createdStation = stationService.createStation(createRequest);
 
         final var uri = UriComponentsBuilder
@@ -45,8 +46,10 @@ public class StationController {
         return ResponseEntity.created(uri).body(createdStation);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateStation(@PathVariable int id, StationModel station) {
-        return ResponseEntity.ok("{\"id\" : " + id + "}");
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StationModel> updateStation(@PathVariable int id, @RequestBody @NotNull @Valid final StationRequest updateRequest) {
+        final var updatedStation = stationService.updateStation(id, updateRequest);
+
+        return ResponseEntity.ok(updatedStation);
     }
 }

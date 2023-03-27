@@ -2,10 +2,10 @@ package com.playground.demo.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playground.demo.exceptions.ExceptionalResponse;
-import com.playground.demo.models.CreateStationRequest;
 import com.playground.demo.models.DockModel;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.enums.StationStatus;
 import com.playground.demo.utils.PostgisSQLContainerInitializer;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -30,6 +29,7 @@ import java.util.Arrays;
 
 import static com.playground.demo.models.enums.Parish.LUMIAR;
 import static com.playground.demo.models.enums.StationStatus.INSTALLING;
+import static com.playground.demo.models.enums.StationStatus.TESTING;
 import static com.playground.demo.persistence.entities.enums.AssetStatus.INACTIVE;
 import static com.playground.demo.utils.TestUtils.readFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -152,8 +152,10 @@ class StationControllerIntegrationTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
-            "stationsController_createStation_invalidParish.json",
-            "stationsController_createStation_invalidStatus.json"
+            "stationsController_stationRequest_invalidParish.json",
+            "stationsController_stationRequest_invalidStatus.json",
+            "stationsController_stationRequest_invalidDocks.json",
+            "stationsController_stationRequest_invalidAddress.json"
     })
     void givenInvalidArguments_whenCreatingAStation_thenBadRequestIsReturned(String fileName) throws IOException {
         // given
@@ -169,13 +171,20 @@ class StationControllerIntegrationTest {
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(response.getBody())
+                .isNotNull()
+                .extracting(ExceptionalResponse::getReason)
+                .isIn(
+                        "The request was badly formed! Please verify that the indicated field is using the accepted values.",
+                        "The request was badly formed! Please verify that a station with the given values does not exist already."
+                );
     }
 
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
-    void givenValidArguments_whenCreationAStation_thenStationIsPersisted() {
+    void givenValidArguments_whenCreatingAStation_thenStationIsPersisted() {
         // given
-        final var input = CreateStationRequest.builder()
+        final var input = StationRequest.builder()
                 .longitude(38.773493797784944)
                 .latitude(-9.161430406823348)
                 .address("Estrada da Torre")
@@ -222,57 +231,102 @@ class StationControllerIntegrationTest {
     @Sql(scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
-    void givenValidArguments_whenUpdatingAStation_thenUpdateIsPersisted() throws IOException {
+    void givenValidArguments_whenUpdatingAStation_thenUpdateIsPersisted() {
         // given
-        final String input = readFileAsString(this.getClass(), "stationsController_updateStation_validRequest.json");
-        final HttpEntity<String> httpEntity = new HttpEntity<>(input);
+        final var input = StationRequest.builder()
+                .longitude(38.772483954508274)
+                .latitude(-9.154035912185192)
+                .address("Rua Nóbrega e Sousa")
+                .parish(LUMIAR)
+                .status(TESTING)
+                .build();
+
+        final var httpEntity = new HttpEntity<>(input);
 
         // when
-        final ResponseEntity<StationModel> creationResponse = restTemplate.exchange("/stations/2", PUT, httpEntity, StationModel.class);
+        final var updateResponse = restTemplate.exchange("/stations/2", PUT, httpEntity, StationModel.class);
 
         // then
-        assertThat(creationResponse.getStatusCode()).isEqualTo(OK);
-        assertThat(creationResponse.getBody())
-                .isNotNull();
-        // todo remaining data
+        final var updatedStation = updateResponse.getBody();
+
+        assertThat(updateResponse.getStatusCode()).isEqualTo(OK);
+        assertThat(updatedStation)
+                .isNotNull()
+                .extracting(StationModel::getLongitude, StationModel::getLatitude, StationModel::getParish, StationModel::getStatus)
+                .containsExactly(input.getLongitude(), input.getLatitude(), input.getParish(), input.getStatus());
 
         // Verify that it was persisted
-        final ResponseEntity<StationModel> response = restTemplate.getForEntity("/stations/2", StationModel.class);
+        final var response = restTemplate.getForEntity("/stations/2", StationModel.class);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody())
-                .isNotNull();
-        // todo remaining data
+                .isNotNull()
+                .isEqualTo(updatedStation);
     }
 
     @Sql(scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenNonexistentStation_whenUpdatingAStation_thenNotFoundIsReturned() {
+        // given
+        final var input = StationRequest.builder()
+                .longitude(38.772483954508274)
+                .latitude(-9.154035912185192)
+                .address("Rua Nóbrega e Sousa")
+                .parish(LUMIAR)
+                .status(TESTING)
+                .build();
+
+        final var headers = new HttpHeaders();
+        headers.setContentType(APPLICATION_JSON);
+
+        final var entity = new HttpEntity<>(input, headers);
+
         // when
-        final ResponseEntity<String> creationResponse = restTemplate.exchange("/stations/999", PUT, HttpEntity.EMPTY, String.class);
+        final var updateResponse = restTemplate.exchange("/stations/999", PUT, entity, ExceptionalResponse.class);
 
         // then
-        assertThat(creationResponse.getStatusCode()).isEqualTo(NOT_FOUND);
+        final var expectedResponse = ExceptionalResponse.builder()
+                .reason("The requested station does not exist, please verify that the identifier is correct.")
+                .faultyValue("id", 999)
+                .build();
+
+        assertThat(updateResponse.getStatusCode()).isEqualTo(NOT_FOUND);
+        assertThat(updateResponse.getBody())
+                .isNotNull()
+                .isEqualTo(expectedResponse);
     }
 
     @Sql(scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
-            "stationsController_updateStation_invalidDuplicatedCoordinates.json",
-            "stationsController_updateStation_invalidParish.json",
-            "stationsController_updateStation_invalidStatus.json"
+            "stationsController_stationRequest_invalidDuplicatedCoordinates.json",
+            "stationsController_stationRequest_invalidParish.json",
+            "stationsController_stationRequest_invalidStatus.json",
+            "stationsController_stationRequest_invalidDocks.json",
+            "stationsController_stationRequest_invalidAddress.json"
     })
     void givenInvalidArguments_whenUpdatingAStation_thenBadRequestIsReturned(String fileName) throws IOException {
         // given
-        final String input = readFileAsString(this.getClass(), fileName);
-        final HttpEntity<String> httpEntity = new HttpEntity<>(input);
+        final var input = readFileAsString(this.getClass(), fileName);
+
+        final var headers = new HttpHeaders();
+        headers.setContentType(APPLICATION_JSON);
+
+        final var entity = new HttpEntity<>(input, headers);
 
         // when
-        final ResponseEntity<String> response = restTemplate.exchange("/stations/1", PUT, httpEntity, String.class);
+        final var updateResponse = restTemplate.exchange("/stations/1", PUT, entity, ExceptionalResponse.class);
+
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(updateResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(updateResponse.getBody()).isNotNull()
+                .extracting(ExceptionalResponse::getReason)
+                .isIn(
+                        "The request was badly formed! Please verify that the indicated field is using the accepted values.",
+                        "The request was badly formed! Please verify that a station with the given values does not exist already."
+                );
     }
 }
