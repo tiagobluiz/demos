@@ -1,3 +1,5 @@
+CREATE EXTENSION postgis;
+
 CREATE TABLE IF NOT EXISTS stations
 (
     id          serial PRIMARY KEY,

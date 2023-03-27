@@ -7,7 +7,6 @@ spring:
     password: password
     url: jdbc:postgresql://localhost:5432/demo
   jpa:
-    database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
     show-sql: true
   flyway:
     baseline-on-migrate: true
