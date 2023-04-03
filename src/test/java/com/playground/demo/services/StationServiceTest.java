@@ -19,10 +19,7 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static com.playground.demo.persistence.entities.enums.Parish.LUMIAR;
 import static com.playground.demo.persistence.entities.enums.StationStatus.ACTIVE;
@@ -43,7 +40,6 @@ public class StationServiceTest {
         EasyRandomParameters parameters = new EasyRandomParameters()
                 .seed(1L)
                 .excludeField(field -> field.getName().equals("coordinates"))
-                .excludeField(field -> field.getName().equals("docks"))
                 .stringLengthRange(3, 10)
                 .collectionSizeRange(1, 15);
         OBJECT_GENERATOR = new EasyRandom(parameters);
@@ -69,6 +65,7 @@ public class StationServiceTest {
                 .address("ADDRESS")
                 .status(ACTIVE)
                 .parish(LUMIAR)
+                .docks(new ArrayList<>())
                 .build();
         when(stationRepository.findById(stationEntity.getId())).thenReturn(Optional.of(stationEntity));
 
@@ -248,6 +245,7 @@ public class StationServiceTest {
                 .address(OBJECT_GENERATOR.nextObject(String.class))
                 .status(ACTIVE)
                 .parish(LUMIAR)
+                .docks(new ArrayList<>())
                 .build();
 
         when(stationRepository.findById(objectBeforeUpdate.getId())).thenReturn(Optional.of(objectBeforeUpdate));
