@@ -14,21 +14,21 @@ public class BikeEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy=GenerationType.AUTO)
-    int id;
+    private int id;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    BikeType type;
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    AssetStatus status;
+    private BikeType type;
 
     @Column(nullable = false)
-    int km;
+    @Enumerated(EnumType.STRING)
+    private AssetStatus status;
+
+    @Column(nullable = false)
+    private int km;
 
     @OneToOne(mappedBy = "bike", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    DockEntity dock;
+    private DockEntity dock;
 
 // TODO: Review if required
 //    @OneToMany(mappedBy = "bike")
