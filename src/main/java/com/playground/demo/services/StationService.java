@@ -12,11 +12,13 @@ import com.playground.demo.persistence.repositories.StationRepository;
 import com.playground.demo.services.mappers.StationMapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StationService {
@@ -56,6 +58,8 @@ public class StationService {
     @NotNull
     @Transactional
     public StationModel createStation(final StationRequest stationToCreate) {
+        log.info("Creating a new station with the following parameters: {}", stationToCreate);
+
         final var stationEntity = stationMapper.mapToEntity(stationToCreate);
 
         final var docks = IntStream.range(0, stationToCreate.getDocks())
@@ -65,6 +69,8 @@ public class StationService {
         stationEntity.setDocks(docks);
 
         final var entity = stationRepository.save(stationEntity);
+
+        log.info("Station with identifier {} was created.", entity.getId());
 
         return stationMapper.mapToModel(entity);
     }
@@ -80,6 +86,8 @@ public class StationService {
     @NotNull
     @Transactional
     public StationModel updateStation(final int stationId, final StationRequest stationToUpdate) {
+        log.info("Updating a new station with the following parameters: {}",stationToUpdate);
+
         final var station = getStationAsEntity(stationId);
 
         final var modelAsEntity = stationMapper.mapToEntity(stationId, stationToUpdate);
