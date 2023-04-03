@@ -7,36 +7,10 @@
       "address": "Rua Luís de Freitas Branco",
       "parish": "LUMIAR",
       "status": "ACTIVE",
-      "docks": [
-        {
-          "id": 11,
-          "status": "ACTIVE",
-          "bike": {
-            "id": 111,
-            "type": "ELECTRIC",
-            "status": "ACTIVE",
-            "km": 555
-          }
-        },
-        {
-          "id": 22,
-          "status": "ACTIVE",
-          "bike": {
-            "id": 333,
-            "type": "CLASSIC",
-            "status": "REQUIRING_MAINTENANCE",
-            "km": 1234
-          }
-        },
-        {
-          "id": 33,
-          "status": "ACTIVE"
-        },
-        {
-          "id": 44,
-          "status": "REQUIRING_MAINTENANCE"
-        }
-      ]
+      "electricBikesAvailable": 1,
+      "classicBikesAvailable": 0,
+      "freeDocks": 1,
+      "totalDocks": 4
     },
     {
       "id": 2,
@@ -45,16 +19,10 @@
       "address": "Rua Nóbrega e Sousa",
       "parish": "LUMIAR",
       "status": "PLANNED",
-      "docks": [
-        {
-          "id": 55,
-          "status": "ACTIVE"
-        },
-        {
-          "id": 66,
-          "status": "INACTIVE"
-        }
-      ]
+      "electricBikesAvailable": 0,
+      "classicBikesAvailable": 0,
+      "freeDocks": 1,
+      "totalDocks": 2
     }
   ]
 }

@@ -2,7 +2,6 @@ package com.playground.demo.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playground.demo.exceptions.ExceptionalResponse;
-import com.playground.demo.models.DockModel;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
 import com.playground.demo.models.StationRequest;
@@ -30,7 +29,6 @@ import java.util.Arrays;
 import static com.playground.demo.models.enums.Parish.LUMIAR;
 import static com.playground.demo.models.enums.StationStatus.INSTALLING;
 import static com.playground.demo.models.enums.StationStatus.TESTING;
-import static com.playground.demo.persistence.entities.enums.AssetStatus.INACTIVE;
 import static com.playground.demo.utils.TestUtils.readFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.PUT;
@@ -203,27 +201,20 @@ class StationControllerIntegrationTest {
 
         assertThat(createdStation)
                 .isNotNull()
-                .extracting(StationModel::getLongitude, StationModel::getLatitude, StationModel::getParish, StationModel::getStatus)
-                .containsExactly(input.getLongitude(), input.getLatitude(), input.getParish(), input.getStatus());
+                .extracting(StationModel::getLongitude, StationModel::getLatitude, StationModel::getParish, StationModel::getStatus, StationModel::getTotalDocks)
+                .containsExactly(input.getLongitude(), input.getLatitude(), input.getParish(), input.getStatus(), input.getDocks());
 
         assertThat(createdStation.getId()).isNotZero();
-
-        assertThat(createdStation.getDocks())
-                .isNotNull()
-                .isNotEmpty()
-                .hasSize(2)
-                .extracting(DockModel::getStatus)
-                .containsExactly(INACTIVE, INACTIVE);
 
         assertThat(creationResponse.getHeaders().getLocation())
                 .isNotNull()
                 .isEqualTo(UriComponentsBuilder.fromPath("/stations/{id}").buildAndExpand(createdStation.getId()).toUri());
 
         // Verify that it was persisted
-        final var response = restTemplate.getForEntity("/stations/" + createdStation.getId(), StationModel.class);
+        final var stationResponse = restTemplate.getForEntity("/stations/" + createdStation.getId(), StationModel.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(OK);
-        assertThat(response.getBody())
+        assertThat(stationResponse.getStatusCode()).isEqualTo(OK);
+        assertThat(stationResponse.getBody())
                 .isNotNull()
                 .isEqualTo(createdStation);
     }

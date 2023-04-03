@@ -1,9 +1,10 @@
 package com.playground.demo.services.mappers;
 
-import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.enums.StationStatus;
 import com.playground.demo.persistence.entities.StationEntity;
+import com.playground.demo.persistence.entities.enums.BikeType;
 import com.playground.demo.utils.GeometryUtils;
 import org.locationtech.jts.geom.Coordinate;
 import org.mapstruct.Mapper;
@@ -12,12 +13,16 @@ import org.mapstruct.NullValueMappingStrategy;
 
 import java.util.List;
 
-@Mapper(imports = {GeometryUtils.class, Coordinate.class}, componentModel = "spring",
+@Mapper(imports = {GeometryUtils.class, Coordinate.class, BikeType.class}, componentModel = "spring",
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface StationMapper {
 
     @Mapping(target = "longitude", source = "entity.coordinates.x")
     @Mapping(target = "latitude", source = "entity.coordinates.y")
+    @Mapping(target = "electricBikesAvailable", expression = "java(entity.getAvailableBikesPerType(BikeType.ELECTRIC))")
+    @Mapping(target = "classicBikesAvailable", expression = "java(entity.getAvailableBikesPerType(BikeType.CLASSIC))")
+    @Mapping(target = "totalDocks", expression = "java(entity.getDocks().size())")
+    @Mapping(target = "freeDocks", source = "entity.numberOfFreeDocks")
     StationModel mapToModel(final StationEntity entity);
 
     List<StationModel> mapToModel(final List<StationEntity> entity);

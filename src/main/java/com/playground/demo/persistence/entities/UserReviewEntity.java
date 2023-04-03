@@ -13,15 +13,15 @@ public class UserReviewEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
 
     @Column(nullable = false)
-    short stars;
+    private short stars;
 
     @Column(length = 512)
-    String review;
+    private String review;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bike_id", nullable = false)
-    BikeEntity bike;
+    private BikeEntity bike;
 }

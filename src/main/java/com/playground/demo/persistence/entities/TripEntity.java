@@ -14,21 +14,21 @@ public class TripEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departure_station_id", nullable = false)
-    StationEntity departureStation;
+    private StationEntity departureStation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "arrival_station_id", nullable = false)
-    StationEntity arrivalStation;
+    private StationEntity arrivalStation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bike_id", nullable = false)
-    BikeEntity bike;
+    private BikeEntity bike;
 
     @Column(name = "travel_time", nullable = false)
     @Temporal(TemporalType.TIME)
-    LocalTime travelTime;
+    private LocalTime travelTime;
 }
