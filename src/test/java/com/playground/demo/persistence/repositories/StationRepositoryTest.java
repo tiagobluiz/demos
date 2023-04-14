@@ -18,6 +18,7 @@ import java.util.Arrays;
 import static com.playground.demo.utils.TestUtils.GEOMETRY_FACTORY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -28,7 +29,7 @@ class StationRepositoryTest {
     @Autowired
     private StationRepository stationRepository;
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenStationsWithinRadius_whenGettingStationsWithin50Meters_thenStationsInRadiusAreReturned() {
@@ -46,7 +47,7 @@ class StationRepositoryTest {
                 .containsOnly(1, 2);
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenNoStationsWithinRadius_whenGettingStationsWithin50Meters_thenEmptyListReturned() {

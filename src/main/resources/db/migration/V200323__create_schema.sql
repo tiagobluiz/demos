@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS bikes
 (
     id                    serial PRIMARY KEY,
     type                  varchar(50) NOT NULL, -- ELECTRIC / CLASSIC
-    status                varchar(50) NOT NULL, -- ON_USE / ACTIVE / ON_MAINTENANCE / REQUIRING_MAINTENANCE
+    status                varchar(50) NOT NULL, -- ACTIVE / INACTIVE / ON_MAINTENANCE / REQUIRING_MAINTENANCE
     km                    int         NOT NULL DEFAULT 0,
     last_maintenance_date date        NULL
 );

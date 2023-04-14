@@ -35,6 +35,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @Testcontainers
 @RunWith(SpringRunner.class)
@@ -48,7 +49,7 @@ class StationControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenCoordinatesAndRadius_whenGettingStationsWithinRadius_thenStationWithinRadiusAreReturned() throws IOException {
@@ -75,7 +76,7 @@ class StationControllerIntegrationTest {
         assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenCoordinatesAndRadiusForNonCoveredPoint_whenGettingStationWithinRadius_thenNoStationsAreReturned() {
@@ -96,7 +97,7 @@ class StationControllerIntegrationTest {
         assertThat(response.getBody()).isEqualTo(NearStationsModel.builder().build());
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenNoQueryParameters_whenGettingStations_thenAllActiveStationAreReturned() throws IOException {
@@ -113,7 +114,7 @@ class StationControllerIntegrationTest {
         assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenAStationId_whenGettingAStation_thenStationDataIsReturned() throws IOException {
@@ -130,7 +131,7 @@ class StationControllerIntegrationTest {
         assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenAnStationId_whenGettingAStationThatDoesNotExist_thenNotFoundIsReturned() {
@@ -219,7 +220,7 @@ class StationControllerIntegrationTest {
                 .isEqualTo(createdStation);
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenValidArguments_whenUpdatingAStation_thenUpdateIsPersisted() {
@@ -255,7 +256,7 @@ class StationControllerIntegrationTest {
                 .isEqualTo(updatedStation);
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
     void givenNonexistentStation_whenUpdatingAStation_thenNotFoundIsReturned() {
@@ -288,7 +289,7 @@ class StationControllerIntegrationTest {
                 .isEqualTo(expectedResponse);
     }
 
-    @Sql(scripts = "/db/init.sql")
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
