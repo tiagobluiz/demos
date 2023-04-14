@@ -63,6 +63,7 @@ class StationRepositoryTest {
                 .isEmpty();
     }
 
+    // Enables to verify that the coordinates are being correctly saved
     @Test
     void givenValidArguments_whenCreatingStation_entityIsPersisted() {
         // given
