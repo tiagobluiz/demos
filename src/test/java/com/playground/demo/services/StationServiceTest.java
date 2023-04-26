@@ -37,7 +37,7 @@ public class StationServiceTest {
     private final static EasyRandom OBJECT_GENERATOR;
 
     static {
-        EasyRandomParameters parameters = new EasyRandomParameters()
+        final var parameters = new EasyRandomParameters()
                 .seed(1L)
                 .excludeField(field -> field.getName().equals("coordinates"))
                 .stringLengthRange(3, 10)
@@ -45,7 +45,7 @@ public class StationServiceTest {
         OBJECT_GENERATOR = new EasyRandom(parameters);
     }
 
-    public StationMapper stationMapper = Mappers.getMapper(StationMapper.class);
+    private final StationMapper stationMapper = Mappers.getMapper(StationMapper.class);
     @Mock
     private StationRepository stationRepository;
 

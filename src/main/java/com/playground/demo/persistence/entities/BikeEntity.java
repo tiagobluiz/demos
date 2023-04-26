@@ -31,7 +31,7 @@ public class BikeEntity {
     private AssetStatus status;
 
     @Column(nullable = false)
-    private int km;
+    private int kms;
 
     @Column(nullable = false)
     private LocalDate lastMaintenanceDate;

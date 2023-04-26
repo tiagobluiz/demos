@@ -7,19 +7,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import static com.playground.demo.models.enums.AssetStatus.ACTIVE;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BikeModel {
-
-    private int id;
+public class BikeRequest {
     private BikeType type;
-    private AssetStatus status;
-    private int kms;
-    private LocalDate lastMaintenanceDate;
-    private double averageReview;
-}
+    @Builder.Default
+    private AssetStatus status = ACTIVE;
 
+    private int kms;
+}

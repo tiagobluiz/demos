@@ -1,9 +1,9 @@
 package com.playground.demo.services;
 
 import com.playground.demo.exceptions.notfound.StationNotFoundException;
-import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.NearStationsModel;
 import com.playground.demo.models.StationModel;
+import com.playground.demo.models.StationRequest;
 import com.playground.demo.models.StationsSearchCriteria;
 import com.playground.demo.persistence.entities.DockEntity;
 import com.playground.demo.persistence.entities.StationEntity;
@@ -42,7 +42,7 @@ public class StationService {
 
     @NotNull
     @Transactional(readOnly = true)
-    public NearStationsModel getAllStations(final StationsSearchCriteria searchCriteria) {
+    public NearStationsModel getAllStations(@NotNull final StationsSearchCriteria searchCriteria) {
         final var statuses = stationMapper.mapStatusToEntity(searchCriteria.getStatuses());
         final var stationsEntities = stationRepository.findAllInRadius(
                 searchCriteria.getCoordinatesAsPoint(),
@@ -57,7 +57,7 @@ public class StationService {
 
     @NotNull
     @Transactional
-    public StationModel createStation(final StationRequest stationToCreate) {
+    public StationModel createStation(@NotNull final StationRequest stationToCreate) {
         log.info("Creating a new station with the following parameters: {}", stationToCreate);
 
         final var stationEntity = stationMapper.mapToEntity(stationToCreate);
@@ -85,8 +85,8 @@ public class StationService {
 
     @NotNull
     @Transactional
-    public StationModel updateStation(final int stationId, final StationRequest stationToUpdate) {
-        log.info("Updating a new station with the following parameters: {}",stationToUpdate);
+    public StationModel updateStation(final int stationId, @NotNull final StationRequest stationToUpdate) {
+        log.info("Updating station {} with the following parameters: {}", stationId, stationToUpdate);
 
         final var station = getStationAsEntity(stationId);
 
