@@ -2,7 +2,7 @@ INSERT INTO stations (id, coordinates, address, parish, status)
 VALUES (1, ST_GeomFromText('POINT(38.77066006800165 -9.160284356927665)', 4326), 'Rua Luís de Freitas Branco', 'LUMIAR', 'ACTIVE'),
        (2, ST_GeomFromText('POINT(38.772483954508274 -9.154035912185192)', 4326), 'Rua Nóbrega e Sousa', 'LUMIAR', 'PLANNED');
 
-INSERT INTO bikes (id, type, status, km, last_maintenance_date)
+INSERT INTO bikes (id, type, status, kms, last_maintenance_date)
 VALUES (111, 'ELECTRIC', 'ACTIVE', 555, '03/15/2022'),
        (222, 'ELECTRIC', 'ACTIVE', 777, '03/14/2022'),
        (333, 'CLASSIC', 'REQUIRING_MAINTENANCE', 1234, '03/15/2021');
