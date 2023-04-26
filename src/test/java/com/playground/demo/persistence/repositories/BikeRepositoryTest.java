@@ -30,14 +30,14 @@ class BikeRepositoryTest {
             .id(111)
             .type(BikeType.ELECTRIC)
             .status(AssetStatus.ACTIVE)
-            .km(555)
+            .kms(555)
             .lastMaintenanceDate(LocalDate.of(2022, 3, 15))
             .build();
     private static final BikeEntity BIKE_2 = BikeEntity.builder()
             .id(222)
             .type(BikeType.ELECTRIC)
             .status(AssetStatus.ACTIVE)
-            .km(777)
+            .kms(777)
             .lastMaintenanceDate(LocalDate.of(2022, 3, 14))
             .build();
 
@@ -45,7 +45,7 @@ class BikeRepositoryTest {
             .id(333)
             .type(BikeType.CLASSIC)
             .status(AssetStatus.REQUIRING_MAINTENANCE)
-            .km(1234)
+            .kms(1234)
             .lastMaintenanceDate(LocalDate.of(2021, 3, 15))
             .build();
 
