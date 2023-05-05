@@ -13,6 +13,7 @@ import java.time.LocalDate;
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface BikeMapper {
 
+    // TODO: Map average review once entity is created
     BikeModel mapToModel(final BikeEntity entity);
 
     // todo:map average review once it is implemented
@@ -24,5 +25,6 @@ public interface BikeMapper {
 
     @Mapping(target = "id", source = "bikeId")
     @Mapping(target = "dock", ignore = true)
+    @Mapping(target = "lastMaintenanceDate", ignore = true)
     BikeEntity mapToEntity(final int bikeId, final BikeRequest bikeRequest);
 }

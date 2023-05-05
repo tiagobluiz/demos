@@ -145,6 +145,41 @@ class BikeServiceTest {
     }
 
     @Test
+    void givenValidArguments_whenUpdatingABikeFromRequiringMaintenanceToActive_thenBikeWithUpdatedLastMaintenanceDateIsReturned() {
+        // given
+        final var updateRequest = BikeRequest.builder()
+                .type(ELECTRIC)
+                .status(ACTIVE)
+                .kms(1234)
+                .build();
+
+        final var bikeRequiringMaintenance = BikeEntity.builder()
+                .id(1)
+                .type(BikeType.ELECTRIC)
+                .status(AssetStatus.REQUIRING_MAINTENANCE)
+                .kms(111)
+                .lastMaintenanceDate(LocalDate.of(2020, 5, 1))
+                .dock(DockEntity.builder().build())
+                .build();
+
+        when(bikeRepository.findById(BIKE_ENTITY.getId())).thenReturn(Optional.of(bikeRequiringMaintenance));
+
+        // when
+        final var updatedBike = bikeService.updateBike(BIKE_ENTITY.getId(), updateRequest);
+
+        // then
+        final var expectedBike = BikeModel.builder()
+                .id(BIKE_ENTITY.getId())
+                .type(ELECTRIC)
+                .status(ACTIVE)
+                .kms(1234)
+                .lastMaintenanceDate(LocalDate.now()) // This can make test fail if the execution start in one day and assertion is made in the following day!
+                .build();
+
+        assertThat(updatedBike).isEqualTo(expectedBike);
+    }
+
+    @Test
     void givenThatBikeDoesNotExist_whenUpdatingStation_thenBikeNotFoundIsThrown() {
         // given
         when(bikeRepository.findById(1)).thenReturn(Optional.empty());

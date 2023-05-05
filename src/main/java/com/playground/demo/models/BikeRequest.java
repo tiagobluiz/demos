@@ -2,6 +2,7 @@ package com.playground.demo.models;
 
 import com.playground.demo.models.enums.AssetStatus;
 import com.playground.demo.models.enums.BikeType;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +19,6 @@ public class BikeRequest {
     @Builder.Default
     private AssetStatus status = ACTIVE;
 
+    @PositiveOrZero
     private int kms;
 }
