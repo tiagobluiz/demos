@@ -68,7 +68,7 @@ class StationControllerIntegrationTest {
 
         // then
         final var expectedResponse = MAPPER.readValue(
-                readFileAsString(this.getClass(), "stationsController_getStations_success.json"),
+                readFileAsString(this.getClass(), "stationsController/getStations_success.json"),
                 NearStationsModel.class
         );
 
@@ -106,7 +106,7 @@ class StationControllerIntegrationTest {
 
         // then
         final var expectedResponse = MAPPER.readValue(
-                readFileAsString(this.getClass(), "stationsController_getActiveStations_success.json"),
+                readFileAsString(this.getClass(), "stationsController/getActiveStations_success.json"),
                 NearStationsModel.class
         );
 
@@ -123,7 +123,7 @@ class StationControllerIntegrationTest {
 
         // then
         final var expectedResponse = MAPPER.readValue(
-                readFileAsString(this.getClass(), "stationsController_getSingleStation_success.json"),
+                readFileAsString(this.getClass(), "stationsController/getSingleStation_success.json"),
                 StationModel.class
         );
 
@@ -134,7 +134,7 @@ class StationControllerIntegrationTest {
     @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "/db/init.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @Test
-    void givenAnStationId_whenGettingAStationThatDoesNotExist_thenNotFoundIsReturned() {
+    void givenAStationId_whenGettingAStationThatDoesNotExist_thenNotFoundIsReturned() {
         // when
         final var response = restTemplate.getForEntity("/stations/999", ExceptionalResponse.class);
 
@@ -151,10 +151,10 @@ class StationControllerIntegrationTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
-            "stationsController_stationRequest_invalidParish.json",
-            "stationsController_stationRequest_invalidStatus.json",
-            "stationsController_stationRequest_invalidDocks.json",
-            "stationsController_stationRequest_invalidAddress.json"
+            "stationsController/stationRequest_invalidParish.json",
+            "stationsController/stationRequest_invalidStatus.json",
+            "stationsController/stationRequest_invalidDocks.json",
+            "stationsController/stationRequest_invalidAddress.json"
     })
     void givenInvalidArguments_whenCreatingAStation_thenBadRequestIsReturned(String fileName) throws IOException {
         // given
@@ -293,11 +293,11 @@ class StationControllerIntegrationTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
-            "stationsController_stationRequest_invalidDuplicatedCoordinates.json",
-            "stationsController_stationRequest_invalidParish.json",
-            "stationsController_stationRequest_invalidStatus.json",
-            "stationsController_stationRequest_invalidDocks.json",
-            "stationsController_stationRequest_invalidAddress.json"
+            "stationsController/stationRequest_invalidDuplicatedCoordinates.json",
+            "stationsController/stationRequest_invalidParish.json",
+            "stationsController/stationRequest_invalidStatus.json",
+            "stationsController/stationRequest_invalidDocks.json",
+            "stationsController/stationRequest_invalidAddress.json"
     })
     void givenInvalidArguments_whenUpdatingAStation_thenBadRequestIsReturned(String fileName) throws IOException {
         // given
