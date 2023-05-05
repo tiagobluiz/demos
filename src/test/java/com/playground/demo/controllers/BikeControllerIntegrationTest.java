@@ -1,6 +1,5 @@
 package com.playground.demo.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playground.demo.exceptions.ExceptionalResponse;
 import com.playground.demo.models.BikeModel;
 import com.playground.demo.models.BikeRequest;
@@ -43,8 +42,6 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @ContextConfiguration(initializers = {PostgisSQLContainerInitializer.class})
 @ActiveProfiles("test")
 class BikeControllerIntegrationTest {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     private TestRestTemplate restTemplate;
