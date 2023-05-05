@@ -35,4 +35,11 @@ public class BikeController {
 
         return ResponseEntity.created(uri).body(createdBike);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BikeModel> updateBike(@PathVariable final int id, @RequestBody @NotNull @Valid final BikeRequest updateRequest) {
+        final var updatedBike = bikeService.updateBike(id, updateRequest);
+
+        return ResponseEntity.ok(updatedBike);
+    }
 }
