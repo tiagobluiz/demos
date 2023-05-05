@@ -68,7 +68,7 @@ class StationControllerIntegrationTest {
 
         // then
         final var expectedResponse = MAPPER.readValue(
-                readFileAsString(this.getClass(), "stationsController/getStations_success.json"),
+                readFileAsString(this.getClass(), "stationController/getStations_success.json"),
                 NearStationsModel.class
         );
 
@@ -106,7 +106,7 @@ class StationControllerIntegrationTest {
 
         // then
         final var expectedResponse = MAPPER.readValue(
-                readFileAsString(this.getClass(), "stationsController/getActiveStations_success.json"),
+                readFileAsString(this.getClass(), "stationController/getActiveStations_success.json"),
                 NearStationsModel.class
         );
 
@@ -123,7 +123,7 @@ class StationControllerIntegrationTest {
 
         // then
         final var expectedResponse = MAPPER.readValue(
-                readFileAsString(this.getClass(), "stationsController/getSingleStation_success.json"),
+                readFileAsString(this.getClass(), "stationController/getSingleStation_success.json"),
                 StationModel.class
         );
 
@@ -151,10 +151,10 @@ class StationControllerIntegrationTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
-            "stationsController/stationRequest_invalidParish.json",
-            "stationsController/stationRequest_invalidStatus.json",
-            "stationsController/stationRequest_invalidDocks.json",
-            "stationsController/stationRequest_invalidAddress.json"
+            "stationController/stationRequest_invalidParish.json",
+            "stationController/stationRequest_invalidStatus.json",
+            "stationController/stationRequest_invalidDocks.json",
+            "stationController/stationRequest_invalidAddress.json"
     })
     void givenInvalidArguments_whenCreatingAStation_thenBadRequestIsReturned(String fileName) throws IOException {
         // given
@@ -293,11 +293,11 @@ class StationControllerIntegrationTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "/db/clean.sql")
     @ParameterizedTest
     @ValueSource(strings = {
-            "stationsController/stationRequest_invalidDuplicatedCoordinates.json",
-            "stationsController/stationRequest_invalidParish.json",
-            "stationsController/stationRequest_invalidStatus.json",
-            "stationsController/stationRequest_invalidDocks.json",
-            "stationsController/stationRequest_invalidAddress.json"
+            "stationController/stationRequest_invalidDuplicatedCoordinates.json",
+            "stationController/stationRequest_invalidParish.json",
+            "stationController/stationRequest_invalidStatus.json",
+            "stationController/stationRequest_invalidDocks.json",
+            "stationController/stationRequest_invalidAddress.json"
     })
     void givenInvalidArguments_whenUpdatingAStation_thenBadRequestIsReturned(String fileName) throws IOException {
         // given
