@@ -1,7 +1,8 @@
-package com.playground.demo.exceptions;
+package com.playground.demo.exceptions.handlers;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.playground.demo.controllers.StationController;
+import com.playground.demo.exceptions.ExceptionalResponse;
+import com.playground.demo.exceptions.notfound.BikeNotFoundException;
 import com.playground.demo.exceptions.notfound.StationNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.stream.Collectors;
 
 @Slf4j
-@ControllerAdvice(assignableTypes = StationController.class)
-public class StationControllerExceptionHandler {
+@ControllerAdvice(basePackages = "com.playground.demo.controllers")
+public class ControllersExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionalResponse> handleNonCoveredExceptions(final Exception exception) {
@@ -79,6 +80,18 @@ public class StationControllerExceptionHandler {
         final var body = ExceptionalResponse.builder()
                 .reason(notFoundException.getReason())
                 .faultyValue("id", notFoundException.getStationId())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler(BikeNotFoundException.class)
+    public ResponseEntity<ExceptionalResponse> handleStationNotFound(final BikeNotFoundException notFoundException) {
+        log.error("Bike with id {} could not be found", notFoundException.getBikeId());
+
+        final var body = ExceptionalResponse.builder()
+                .reason(notFoundException.getReason())
+                .faultyValue("id", notFoundException.getBikeId())
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);

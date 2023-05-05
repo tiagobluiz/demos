@@ -12,6 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
+import static com.playground.demo.persistence.entities.enums.AssetStatus.ACTIVE;
+import static com.playground.demo.persistence.entities.enums.AssetStatus.REQUIRING_MAINTENANCE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -58,10 +63,14 @@ public class BikeService {
 
         final var entityWithRequestedChanges = bikeMapper.mapToEntity(bikeId, bikeToUpdate);
 
+        // Maintenance has finished, updating last maintenance date
+        if (bike.getStatus() == REQUIRING_MAINTENANCE && entityWithRequestedChanges.getStatus() == ACTIVE) {
+            bike.setLastMaintenanceDate(LocalDate.now());
+        }
+
         bike.setType(entityWithRequestedChanges.getType())
                 .setStatus(entityWithRequestedChanges.getStatus())
-                .setKms(entityWithRequestedChanges.getKms())
-                .setLastMaintenanceDate(entityWithRequestedChanges.getLastMaintenanceDate());
+                .setKms(entityWithRequestedChanges.getKms());
 
         return bikeMapper.mapToModel(bike);
     }
