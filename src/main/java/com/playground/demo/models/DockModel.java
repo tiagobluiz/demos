@@ -1,6 +1,7 @@
 package com.playground.demo.models;
 
 import com.playground.demo.persistence.entities.enums.AssetStatus;
+import jakarta.annotation.Nullable;
 import lombok.*;
 
 @Data
@@ -10,6 +11,8 @@ import lombok.*;
 @EqualsAndHashCode
 public class DockModel {
         private int id;
+        private int number;
         private AssetStatus status;
-        private BikeModel bike;
+        @Nullable
+        private String bikeDesignation;
 }

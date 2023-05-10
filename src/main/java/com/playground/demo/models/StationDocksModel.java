@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StationDocks {
+public class StationDocksModel {
 
     @Builder.Default
     private List<DockModel> docks = new ArrayList<>();
